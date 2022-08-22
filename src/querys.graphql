@@ -1,0 +1,55 @@
+query GetRecommendedStreams($random: ID!, $limit: Int = 50) {
+  personalSections(input: { sectionInputs: [FOLLOWED_SECTION] }) {
+    items {
+      ...PersonalSectionChanneleParts
+    }
+  }
+  recommendedStreams(recRequestID: $random, location: "LEFT_NAV", first: $limit, context: {}) {
+    edges {
+      node {
+        broadcaster {
+          ...UserParts
+        }
+      }
+    }
+  }
+}
+
+query GetUser($login: String!) {
+  user(login: $login) {
+    ...UserParts
+  }
+}
+
+fragment PersonalSectionChanneleParts on PersonalSectionChannel {
+  user {
+    ...UserParts
+  }
+}
+
+fragment UserParts on User {
+  stream {
+    broadcaster {
+      id
+      login
+      displayName
+      roles {
+        isPartner
+      }
+      broadcastSettings {
+        title
+        game {
+          displayName
+        }
+      }
+    }
+    broadcastLanguage
+    createdAt
+    viewersCount
+    previewImageURL
+    playbackAccessToken(params: { platform: "web", playerType: "site" }) {
+      signature
+      value
+    }
+  }
+}
