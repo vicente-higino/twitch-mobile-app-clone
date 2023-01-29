@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 
 
 const ChatMessage = {
@@ -21,19 +21,19 @@ const ChatMessage = {
   "user-type": "string"
 } as const;
 
-type keys = keyof typeof ChatMessage
+type keys = keyof typeof ChatMessage;
 export type ChatMessage = Partial<Record<keys, string>>
 function parseMessage(message: string): ChatMessage {
-  const parts = message.split(";")
-  let res: ChatMessage = {}
+  const parts = message.split(";");
+  let res: ChatMessage = {};
   for (const part of parts) {
     const match = part.match(/(.+?)=([^;]+)/)
     if (match && match.length == 3) {
-      let [_, key, value] = match
+      let [_, key, value] = match;
       if (isKey(key)) {
         if (key === "user-type" && value) {
-          const m = value.match("PRIVMSG #.+:(.+)")
-          value = m ? m[1] : "no msg"
+          const m = value.match("PRIVMSG #.+ :(.+)");
+          value = m ? m[1] : "no msg";
         }
         res[key] = value;
       }
@@ -49,13 +49,14 @@ function isKey(key: string): key is keys {
 
 export const useChat = ({ login }: { login: string }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const tempMessages = useRef<ChatMessage[]>([]);
   useEffect(() => {
     const ws = new WebSocket("wss://irc-ws.chat.twitch.tv/")
     ws.onopen = () => {
       ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands")
-      ws.send("PASS oauth:rrhc9kybloxuips6l3rc4omou9pigw")
-      ws.send("NICK vicentehigino")
-      ws.send("USER vicentehigino 8 * :vicentehigino")
+      ws.send("PASS SCHMOOPIIE")
+      ws.send("NICK justinfan42467")
+      // ws.send("USER justinfan42467 8 * :justinfan42467")
       ws.send(`JOIN #${login}`)
     }
     ws.onmessage = (mes) => {
@@ -66,10 +67,11 @@ export const useChat = ({ login }: { login: string }) => {
         }
         if (mes.data.includes("PRIVMSG")) {
           const message = parseMessage(mes.data)
-          setMessages(prev => {
-            if (prev.length > 50) prev.shift()
-            return [...prev, message]
-          })
+          tempMessages.current = [message, ...tempMessages.current]
+          // setMessages(prev => {
+          //   if (prev.length > 20) prev.pop()
+          //   return [message, ...prev]
+          // })
         }
       }
     }
@@ -78,5 +80,16 @@ export const useChat = ({ login }: { login: string }) => {
       ws.close()
     }
   }, [])
+  useEffect(() => {
+    const id = setInterval(() => {
+      tempMessages.current = tempMessages.current.slice(0, 20);
+      setMessages(tempMessages.current);
+    }, 2000);
+
+    return () => {
+      clearInterval(id);
+    }
+  }, [])
+
   return messages;
 }
