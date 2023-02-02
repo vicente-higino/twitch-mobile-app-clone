@@ -42578,21 +42578,29 @@ export type GetRecommendedStreamsQueryVariables = Exact<{
 }>;
 
 
-export type GetRecommendedStreamsQuery = { __typename?: 'Query', personalSections?: Array<{ __typename?: 'PersonalSection', items?: Array<{ __typename?: 'PersonalSectionChannel', user?: { __typename?: 'User', stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null }> | null }> | null, recommendedStreams?: { __typename?: 'RecommendedStreamsConnection', edges?: Array<{ __typename?: 'RecommendedStreamsEdge', node?: { __typename?: 'Stream', broadcaster?: { __typename?: 'User', stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null } | null }> | null } | null };
+export type GetRecommendedStreamsQuery = { __typename?: 'Query', personalSections?: Array<{ __typename?: 'PersonalSection', items?: Array<{ __typename?: 'PersonalSectionChannel', user?: { __typename?: 'User', id: string, stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null }> | null }> | null, recommendedStreams?: { __typename?: 'RecommendedStreamsConnection', edges?: Array<{ __typename?: 'RecommendedStreamsEdge', node?: { __typename?: 'Stream', broadcaster?: { __typename?: 'User', id: string, stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null } | null }> | null } | null };
 
 export type GetUserQueryVariables = Exact<{
   login: Scalars['String'];
 }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null };
+export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null };
 
-export type PersonalSectionChannelePartsFragment = { __typename?: 'PersonalSectionChannel', user?: { __typename?: 'User', stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null };
+export type GetBadgesQueryVariables = Exact<{
+  login: Scalars['String'];
+}>;
 
-export type UserPartsFragment = { __typename?: 'User', stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null };
+
+export type GetBadgesQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, broadcastBadges?: Array<{ __typename?: 'Badge', imageURL: string, setID: string, version: string } | null> | null } | null, badges?: Array<{ __typename?: 'Badge', imageURL: string, setID: string, version: string } | null> | null };
+
+export type PersonalSectionChannelePartsFragment = { __typename?: 'PersonalSectionChannel', user?: { __typename?: 'User', id: string, stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null } | null };
+
+export type UserPartsFragment = { __typename?: 'User', id: string, stream?: { __typename?: 'Stream', broadcastLanguage?: Language | null, createdAt?: any | null, viewersCount?: number | null, previewImageURL?: string | null, broadcaster?: { __typename?: 'User', id: string, login: string, displayName: string, roles?: { __typename?: 'UserRoles', isPartner?: boolean | null } | null, broadcastSettings?: { __typename?: 'BroadcastSettings', title: string, game?: { __typename?: 'Game', displayName: string } | null } | null } | null, playbackAccessToken?: { __typename?: 'PlaybackAccessToken', signature: string, value: string } | null } | null };
 
 export const UserPartsFragmentDoc = gql`
     fragment UserParts on User {
+  id
   stream {
     broadcaster {
       id
@@ -42714,3 +42722,48 @@ export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Ge
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetBadgesDocument = gql`
+    query GetBadges($login: String!) {
+  user(login: $login) {
+    id
+    broadcastBadges {
+      imageURL
+      setID
+      version
+    }
+  }
+  badges {
+    imageURL
+    setID
+    version
+  }
+}
+    `;
+
+/**
+ * __useGetBadgesQuery__
+ *
+ * To run a query within a React component, call `useGetBadgesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBadgesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBadgesQuery({
+ *   variables: {
+ *      login: // value for 'login'
+ *   },
+ * });
+ */
+export function useGetBadgesQuery(baseOptions: Apollo.QueryHookOptions<GetBadgesQuery, GetBadgesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBadgesQuery, GetBadgesQueryVariables>(GetBadgesDocument, options);
+      }
+export function useGetBadgesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBadgesQuery, GetBadgesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBadgesQuery, GetBadgesQueryVariables>(GetBadgesDocument, options);
+        }
+export type GetBadgesQueryHookResult = ReturnType<typeof useGetBadgesQuery>;
+export type GetBadgesLazyQueryHookResult = ReturnType<typeof useGetBadgesLazyQuery>;
+export type GetBadgesQueryResult = Apollo.QueryResult<GetBadgesQuery, GetBadgesQueryVariables>;

@@ -21,6 +21,22 @@ query GetUser($login: String!) {
   }
 }
 
+query GetBadges($login: String!) {
+  user(login: $login) {
+    id
+    broadcastBadges {
+      imageURL
+      setID
+      version
+    }
+  }
+  badges {
+    imageURL
+    setID
+    version
+  }
+}
+
 fragment PersonalSectionChanneleParts on PersonalSectionChannel {
   user {
     ...UserParts
@@ -28,6 +44,7 @@ fragment PersonalSectionChanneleParts on PersonalSectionChannel {
 }
 
 fragment UserParts on User {
+  id
   stream {
     broadcaster {
       id
