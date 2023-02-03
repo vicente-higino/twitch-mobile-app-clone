@@ -57,7 +57,7 @@ export const useChat = ({ login }: { login: string }) => {
       ws.send("PASS SCHMOOPIIE")
       ws.send("NICK justinfan42467")
       // ws.send("USER justinfan42467 8 * :justinfan42467")
-      ws.send(`JOIN #${login}`)
+      ws.send(`JOIN #${login.toLowerCase()}`)
     }
     ws.onmessage = (mes) => {
       if (typeof mes?.data === "string") {
@@ -82,9 +82,9 @@ export const useChat = ({ login }: { login: string }) => {
   }, [])
   useEffect(() => {
     const id = setInterval(() => {
-      tempMessages.current = tempMessages.current.slice(0, 20);
+      tempMessages.current = tempMessages.current.slice(0, 30);
       setMessages(tempMessages.current);
-    }, 2000);
+    }, 1000);
 
     return () => {
       clearInterval(id);
