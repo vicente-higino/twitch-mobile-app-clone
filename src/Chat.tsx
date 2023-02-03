@@ -15,7 +15,7 @@ const badgeSchema = z.object({
 type Badge = z.infer<typeof badgeSchema>;
 
 function useGetBadges(login: string) {
-  const { data, error, loading } = useGetBadgesQuery({ variables: { login } });
+  const { data } = useGetBadgesQuery({ variables: { login } });
   const badges = useRef<Record<string, string>>({});
   function addBadge(badge: unknown) {
     const b = badgeSchema.safeParse(badge);
@@ -34,7 +34,6 @@ function useGetBadges(login: string) {
     }
   }
   return badges;
-
 }
 
 

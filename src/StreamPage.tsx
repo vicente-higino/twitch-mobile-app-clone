@@ -11,6 +11,7 @@ import { SpinnigCircle } from './SpinnigCircle';
 
 export const StreamPage: FC<NavigationProps> = ({ route, navigation }) => {
   const { data, loading, error } = useGetUserQuery({ variables: { login: route.params?.login ?? "" } });
+  const stream = extractStream(data?.user?.stream);
 
   if (loading) {
     return <SpinnigCircle />;
@@ -18,8 +19,7 @@ export const StreamPage: FC<NavigationProps> = ({ route, navigation }) => {
   if (error) {
     return <Text>Erorr...</Text>;
   }
-  if (data?.user?.stream) {
-    const stream = extractStream(data.user.stream);
+  if (stream) {
     return <View
       style={{ flex: 1 }}>
       <Stream stream={stream} live navigate={() => { }} />

@@ -10,21 +10,24 @@ import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { getTimePassed } from './utils/util';
 import { SpinnigCircle } from './SpinnigCircle';
+import { z } from "zod";
 
 
-export type Stream = {
-  id: string;
-  title: string;
-  game: string;
-  displayName: string;
-  login: string;
-  imgUrl: string;
-  viewCount: number;
-  isPartner: boolean;
-  streamUptime: string;
-  streamUrl: string;
-  createdAt: string;
-}
+export const StreamSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  game: z.string(),
+  displayName: z.string(),
+  login: z.string(),
+  imgUrl: z.string().url(),
+  viewCount: z.number(),
+  isPartner: z.boolean(),
+  streamUptime: z.string(),
+  streamUrl: z.string().url(),
+  createdAt: z.string().datetime(),
+});
+
+export type Stream = z.infer<typeof StreamSchema>;
 
 
 

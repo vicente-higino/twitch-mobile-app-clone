@@ -1,4 +1,4 @@
-import { Stream } from "../Stream";
+import { Stream, StreamSchema } from "../Stream";
 import { UserPartsFragment } from "../generated/graphql";
 
 export function getTimePassed(time: string) {
@@ -13,7 +13,9 @@ export function formatTimeFromSeconds(time: number) {
   return `${hours}:${mins}:${secs}`;
 }
 
-export function getHslStream({ login, sig, token }: { login: string, sig: string, token: string }): string {
+export function getHslStream({ login, sig, token }: { login?: string, sig?: string, token?: string }): string {
+  if (!login || !sig || !token) return "";
+
   const query = new URLSearchParams({
     allow_source: "true",
     allow_audio_only: "true",
@@ -28,19 +30,20 @@ export function getHslStream({ login, sig, token }: { login: string, sig: string
   return `https://usher.ttvnw.net/api/channel/hls/${login}.m3u8?${query}`
 }
 
-export function extractStream(stream: UserPartsFragment["stream"]): Stream {
-  const id = stream?.broadcaster?.id ?? ""
-  const title = stream?.broadcaster?.broadcastSettings?.title ?? ""
-  const game = stream?.broadcaster?.broadcastSettings?.game?.displayName ?? ""
-  const displayName = stream?.broadcaster?.displayName ?? ""
-  const login = stream?.broadcaster?.login ?? ""
-  const imgUrl = stream?.previewImageURL?.replace("{width}", "1280").replace("{height}", "720") ?? ""
-  const viewCount = stream?.viewersCount ?? 0
-  const isPartner = stream?.broadcaster?.roles?.isPartner ?? false
-  const streamUptime = stream?.createdAt ? getTimePassed(stream.createdAt) : ""
-  const createdAt = stream?.createdAt ?? ""
-  const token = stream?.playbackAccessToken?.value ?? ""
-  const sig = stream?.playbackAccessToken?.signature ?? ""
-  const streamUrl = getHslStream({ login, sig, token })
-  return { id, login, title, game, displayName, imgUrl, viewCount, isPartner, streamUptime, streamUrl, createdAt }
+export function extractStream(stream: UserPartsFragment["stream"]): Stream | null {
+  const id = stream?.broadcaster?.id;
+  const title = stream?.broadcaster?.broadcastSettings?.title;
+  const game = stream?.broadcaster?.broadcastSettings?.game?.displayName;
+  const displayName = stream?.broadcaster?.displayName;
+  const login = stream?.broadcaster?.login;
+  const imgUrl = stream?.previewImageURL?.replace("{width}", "1280").replace("{height}", "720");
+  const viewCount = stream?.viewersCount;
+  const isPartner = stream?.broadcaster?.roles?.isPartner;
+  const streamUptime = stream?.createdAt && getTimePassed(stream.createdAt);
+  const createdAt = stream?.createdAt;
+  const token = stream?.playbackAccessToken?.value;
+  const sig = stream?.playbackAccessToken?.signature;
+  const streamUrl = getHslStream({ login, sig, token });
+  const streamParsed = StreamSchema.safeParse({ id, login, title, game, displayName, imgUrl, viewCount, isPartner, streamUptime, streamUrl, createdAt });
+  return streamParsed.success ? streamParsed.data : null;
 }
