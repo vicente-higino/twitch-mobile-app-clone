@@ -10,7 +10,8 @@ import { SpinnigCircle } from './SpinnigCircle';
 
 
 export const StreamPage: FC<NavigationProps> = ({ route, navigation }) => {
-  const { data, loading, error } = useGetUserQuery({ variables: { login: route.params?.login! } });
+  if (!route.params) return null;
+  const { data, loading, error } = useGetUserQuery({ variables: { login: route.params.login } });
   const stream = extractStream(data?.user?.stream);
 
   if (loading) {
@@ -23,14 +24,14 @@ export const StreamPage: FC<NavigationProps> = ({ route, navigation }) => {
     return <View
       style={{ flex: 1 }}>
       <Stream stream={stream} live navigate={() => { }} />
-      <Chat login={stream.login} />
+      <Chat streamerName={stream.login} />
     </View>;
   }
   return (<View
     style={{ flex: 1 }}>
-    <Text style={{ fontSize: 24, fontWeight: 'bold', color: "#fff" }}>{route.params?.login!} Offline Chat...</Text>
+    <Text style={{ fontSize: 24, fontWeight: 'bold', color: "#fff" }}>{route.params.login} Offline Chat...</Text>
     <Button title='Go Back' onPress={() => navigation.goBack()} />
-    <Chat login={route.params?.login!} />
+    <Chat streamerName={route.params.login} />
   </View>
   );
 };

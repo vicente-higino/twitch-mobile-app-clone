@@ -32,8 +32,8 @@ function parseMessage(message: string): ChatMessage {
       let [_, key, value] = match;
       if (isKey(key)) {
         if (key === "user-type" && value) {
-          const m = value.match("PRIVMSG #.+ :(.+)");
-          value = m ? m[1] : "no msg";
+          const m = message.match(/PRIVMSG #\w+ :(.+)/);
+          value = m ? m[1] : "";
         }
         res[key] = value;
       }
@@ -42,13 +42,14 @@ function parseMessage(message: string): ChatMessage {
   return res;
 }
 
-function isKey(key: string): key is keys {
-  return key in ChatMessage;
+function isKey(key?: string): key is keys {
+  return key ? key in ChatMessage : false;
 }
 
 
-export const useChat = ({ login }: { login: string }) => {
+export const useChat = ({ streamerName }: { streamerName: string }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
   const tempMessages = useRef<ChatMessage[]>([]);
   useEffect(() => {
     const ws = new WebSocket("wss://irc-ws.chat.twitch.tv/")
@@ -57,21 +58,17 @@ export const useChat = ({ login }: { login: string }) => {
       ws.send("PASS SCHMOOPIIE")
       ws.send("NICK justinfan42467")
       // ws.send("USER justinfan42467 8 * :justinfan42467")
-      ws.send(`JOIN #${login.toLowerCase()}`)
+      ws.send(`JOIN #${streamerName.toLowerCase()}`)
     }
     ws.onmessage = (mes) => {
+      if (loading) setLoading(false);
       if (typeof mes?.data === "string") {
         if (mes.data.startsWith("PING")) {
-          ws.send("PONG :tmi.twitch.tv")
-          return;
+          ws.send("PONG :tmi.twitch.tv");
         }
         if (mes.data.includes("PRIVMSG")) {
-          const message = parseMessage(mes.data)
-          tempMessages.current = [message, ...tempMessages.current]
-          // setMessages(prev => {
-          //   if (prev.length > 20) prev.pop()
-          //   return [message, ...prev]
-          // })
+          const message = parseMessage(mes.data);
+          tempMessages.current = [message, ...tempMessages.current];
         }
       }
     }
@@ -91,5 +88,5 @@ export const useChat = ({ login }: { login: string }) => {
     }
   }, [])
 
-  return messages;
+  return [messages, loading] as const;
 }

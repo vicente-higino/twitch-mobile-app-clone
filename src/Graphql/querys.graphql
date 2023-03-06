@@ -37,6 +37,12 @@ query GetBadges($login: String!) {
   }
 }
 
+query GetUserId($login: String!) {
+  user(login: $login) {
+    id
+  }
+}
+
 fragment PersonalSectionChanneleParts on PersonalSectionChannel {
   user {
     ...UserParts

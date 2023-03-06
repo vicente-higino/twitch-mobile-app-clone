@@ -1,82 +1,78 @@
-import React, { FC, useEffect, useRef } from 'react';
-import { Image, Text, View } from 'react-native';
-import { ChatMessage, useChat } from './useChat';
+import React, { FC } from 'react';
+import { Text, View } from 'react-native';
+import { ChatMessage, useChat } from './Hooks/useChat';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { useGetBadgesQuery } from './generated/graphql';
-import { z } from "zod";
+import { useGetBadges } from './Hooks/useGetBadges';
+import { SpinnigCircle } from './SpinnigCircle';
+import { useGetUserIdQuery } from './generated/graphql';
+import FastImage from 'react-native-fast-image';
+import { useGetEmotes } from './Hooks/useGetEmotes';
+import { Badges } from './Badges';
+import { useChatContext, ChatContext } from './Hooks/useChatContext';
 
-
-const badgeSchema = z.object({
-  imageURL: z.string().url(),
-  setID: z.string(),
-  version: z.string()
-});
-
-type Badge = z.infer<typeof badgeSchema>;
-
-function useGetBadges(login: string) {
-  const { data } = useGetBadgesQuery({ variables: { login } });
-  const badges = useRef<Record<string, string>>({});
-  function addBadge(badge: unknown) {
-    const b = badgeSchema.safeParse(badge);
-    if (b.success) {
-      badges.current[`${b.data.setID}/${b.data.version}`] = b.data.imageURL;
-    }
-  }
-  if (data?.badges) {
-    for (const badge of data.badges) {
-      addBadge(badge);
-    }
-  }
-  if (data?.user?.broadcastBadges) {
-    for (const badge of data.user.broadcastBadges) {
-      addBadge(badge);
-    }
-  }
-  return badges;
-}
-
-
-export const Chat: FC<{ login: string; }> = ({ login }) => {
-  const messages = useChat({ login });
-  const badgesMap = useGetBadges(login);
-
-  const Badges: FC<{ badges?: string }> = ({ badges }) => {
-    if (!badges) return null;
-    const badgesKeys = badges.split(",");
-    return <View
-      style={{
-        flexDirection: "row",
-      }}>{
-        badgesKeys.map((badgeKey) => {
-          return <Image
-            source={{ uri: badgesMap.current[badgeKey] }}
-            style={{ width: 16, height: 16, marginRight: 3, }}
-            key={badgesMap.current[badgeKey]} />
-        })
-      }</View>
-  }
-  const renderItem: ListRenderItem<ChatMessage> = (info) => {
-    return <Text style={{ textAlignVertical: "center" }}>
-      <View style={{ alignItems: "center", flex: 1, flexDirection: 'row' }}>
-        <Badges badges={info.item.badges} />
-        <Text style={{ color: info.item.color ?? "white", fontWeight: "bold" }}>
-          {info.item['display-name']}
-          <Text style={{ color: "white", fontWeight: "normal" }}>: </Text>
-        </Text>
-      </View>
-      <Text style={{ color: "white", fontWeight: "normal" }}>{info.item['user-type']}</Text>
-    </Text>;
-  };
+export const Chat: FC<{ streamerName: string; }> = ({ streamerName }) => {
+  const { data } = useGetUserIdQuery({ variables: { login: streamerName } });
+  if (!data?.user?.id) return <SpinnigCircle />;
+  const { getEmote, addEmotes } = useGetEmotes(data.user.id);
+  const { getBadge } = useGetBadges(streamerName);
 
   return <View
     style={{ flexGrow: 1, minHeight: 300 }}>
-    <FlashList
-      data={messages}
-      inverted
-      estimatedItemSize={20}
-      keyExtractor={(item, i) => item.id ?? i.toString()}
-      renderItem={renderItem} />
+    <ChatContext.Provider value={{ getEmote, getBadge, addEmotes }}>
+      <MessageList {...{ streamerName }} />
+    </ChatContext.Provider>
   </View>;
 
 };
+
+const MessageList: FC<{ streamerName: string; }> = ({ streamerName }) => {
+
+  const [messages, loading] = useChat({ streamerName });
+
+  if (loading) return <SpinnigCircle />
+
+  const renderItem: ListRenderItem<ChatMessage> = info => <Message {...{ message: info.item }} />
+
+  return <FlashList
+    data={messages}
+    inverted
+    estimatedItemSize={20}
+    removeClippedSubviews
+    keyExtractor={(item, i) => item.id + i.toString()}
+    renderItem={renderItem}
+  />
+}
+
+const Message: FC<{
+  message: ChatMessage,
+}> = ({ message }) => {
+  return <Text style={{ textAlignVertical: "center" }}>
+    <View style={{ alignItems: "center", flex: 1, flexDirection: 'row' }}>
+      <Badges badges={message.badges} />
+      <Text style={{ color: message.color ?? "#fff", fontWeight: "bold" }}>
+        {message['display-name']}
+        <Text style={{ color: "white", fontWeight: "normal" }}>: </Text>
+      </Text>
+    </View>
+    {message['user-type'] && <MessageTextWithEmotes message={message['user-type']} emotes={message["emotes"]} />}
+  </Text>;
+}
+
+const MessageTextWithEmotes: FC<{ message: string, emotes?: string }> = ({ message, emotes }) => {
+  const { getEmote, addEmotes } = useChatContext();
+  if (emotes) addEmotes(emotes, message);
+
+  return (
+    <Text style={{ color: "white", fontWeight: "normal" }}>{message.split(" ").map((token, i) => {
+      const emote = getEmote(token);
+      return !emote ?
+        <Text key={i}>{token} </Text> :
+        <FastImage key={i} source={{
+          uri: emote.url,
+        }} style={{
+          width: emote.width,
+          height: emote.height,
+        }} resizeMode="contain" />;
+    })}</Text>
+  );
+}

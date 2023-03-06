@@ -37,7 +37,7 @@ export const Streams: FC<NavigationProps> = ({ navigation }) => {
   function updateStreamsArray(lives: Stream[]): void {
     setStreams(prev => {
       const map = new Map([...prev, ...lives].map(pos => [pos.id, pos]));
-      return [...map.values()];
+      return [...map.values()].sort((a, b) => a.viewCount < b.viewCount ? 1 : -1);
     });
   }
 
@@ -52,7 +52,6 @@ export const Streams: FC<NavigationProps> = ({ navigation }) => {
           stream && lives.push(stream);
         }
       }
-      lives.sort((a, b) => a.viewCount < b.viewCount ? 1 : -1);
       updateStreamsArray(lives);
     }
     if (data?.recommendedStreams?.edges) {
@@ -80,7 +79,7 @@ export const Streams: FC<NavigationProps> = ({ navigation }) => {
         <TextInput
           placeholder='Go to streamer'
           onSubmitEditing={() => navigation.navigate("Stream", { login: textInputValue })}
-          onChangeText={(text) => setTextInputValue(text)}
+          onChangeText={(text) => setTextInputValue(text.trimEnd())}
           style={{
             backgroundColor: "#757575",
             flexGrow: 1,
